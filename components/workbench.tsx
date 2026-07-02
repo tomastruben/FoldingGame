@@ -239,16 +239,40 @@ export function Workbench() {
     [applyEffect]
   );
 
+  const handleDeselect = useCallback(() => {
+    setSelectedId(null);
+    ctxRef.current.selectedId = null;
+    viewerRef.current?.clearFocus();
+    viewerRef.current?.resetView();
+    // Clearing the focus returns the structure to its lively idle spin.
+    viewerRef.current?.setSpin(true);
+  }, []);
+
   const handleSelectFromTable = useCallback(
     (v: Variant) => {
+      // Clicking the already-focused variant clears the selection (toggle).
+      if (v.id === selectedId) {
+        handleDeselect();
+        return;
+      }
       setSelectedId(v.id);
       ctxRef.current.selectedId = v.id;
       if (structure && v.residues.length) {
         viewerRef.current?.focusResidues(v.residues, structure.chain);
       }
     },
-    [structure]
+    [structure, selectedId, handleDeselect]
   );
+
+  // Escape clears the focused variant from anywhere on the surface.
+  useEffect(() => {
+    if (!selectedId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleDeselect();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selectedId, handleDeselect]);
 
   // Single instances of each surface — composed differently per breakpoint so
   // the (expensive, single-WebGL) Mol* viewer never mounts twice.
@@ -268,6 +292,7 @@ export function Workbench() {
       structure={structure}
       status={status}
       selected={selected}
+      onDeselect={handleDeselect}
       onStatus={(s) => {
         setStatus(s);
         // On (re)mount — e.g. crossing the breakpoint — re-load the current

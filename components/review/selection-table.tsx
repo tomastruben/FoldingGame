@@ -210,6 +210,7 @@ function Row({
     <TableRow
       onClick={onSelect}
       data-state={selected ? "selected" : undefined}
+      title={selected ? "Focused — click again or press Esc to clear" : undefined}
       tabIndex={isParent ? undefined : 0}
       role={isParent ? undefined : "button"}
       onKeyDown={

@@ -1,7 +1,7 @@
 "use client";
 
 import { type RefObject, useState } from "react";
-import { Orbit, RotateCcw } from "lucide-react";
+import { Orbit, RotateCcw, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,6 +26,7 @@ interface Props {
   structure: StructurePreset | null;
   status: Status;
   selected: Variant | null;
+  onDeselect: () => void;
   onStatus: (s: Status, pdbId?: string) => void;
 }
 
@@ -34,6 +35,7 @@ export function ViewerPanel({
   structure,
   status,
   selected,
+  onDeselect,
   onStatus,
 }: Props) {
   const [rep, setRep] = useState<RepresentationTheme>("chain");
@@ -137,6 +139,15 @@ export function ViewerPanel({
                   {m}
                 </span>
               ))}
+              <button
+                type="button"
+                onClick={onDeselect}
+                title="Clear focus (Esc)"
+                className="pointer-events-auto ml-0.5 inline-flex items-center gap-1 rounded-md border border-border bg-background/70 py-0.5 pl-1 pr-1.5 text-[10px] font-medium text-muted-foreground backdrop-blur-md transition-colors hover:text-foreground"
+              >
+                <X className="size-3" />
+                clear
+              </button>
             </div>
           ) : (
             <p className="max-w-md text-[11px] leading-relaxed text-muted-foreground/70">
