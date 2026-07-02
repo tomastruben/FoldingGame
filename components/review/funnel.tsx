@@ -44,7 +44,7 @@ export function Funnel({ active }: { active: boolean }) {
                       !active && i > 1 && "text-muted-foreground/40"
                     )}
                   >
-                    {active || i < 2 ? fmt(s.value) : "—"}
+                    {fmt(s.value)}
                   </div>
                   <div
                     className={cn(

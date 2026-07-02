@@ -163,7 +163,7 @@ export function ChatPanel({
           </InputGroupAddon>
         </InputGroup>
 
-        <p className="mt-2 px-1 text-[10px] leading-relaxed text-muted-foreground/60">
+        <p className="mt-2 px-1 text-[11px] leading-relaxed text-muted-foreground/70">
           Scripted agent for the demo — same streamed tool-call loop as a live AI
           SDK model.
         </p>

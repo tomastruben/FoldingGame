@@ -43,7 +43,7 @@ export default function Home() {
               />
               <span className="truncate text-xs text-muted-foreground">
                 <span className="font-medium text-foreground">Objective</span>
-                <span className="mx-2 text-border">·</span>
+                <span className="mx-2 text-muted-foreground/40">·</span>
                 {OBJECTIVE.summary}
               </span>
             </div>

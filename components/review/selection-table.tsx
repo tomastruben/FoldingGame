@@ -125,9 +125,10 @@ export function SelectionTable({ variants, selectedId, onSelect }: Props) {
           </TableHeader>
           <TableBody>
             <Row variant={PARENT} heatSet={heatSet} isParent selected={false} onSelect={() => {}} />
-            {rows.map((v) => (
+            {rows.map((v, i) => (
               <Row
                 key={v.id}
+                index={i}
                 variant={v}
                 heatSet={heatSet}
                 selected={v.id === selectedId}
@@ -195,20 +196,38 @@ function Row({
   heatSet,
   selected,
   isParent,
+  index,
   onSelect,
 }: {
   variant: Variant;
   heatSet: Variant[];
   selected: boolean;
   isParent?: boolean;
+  index?: number;
   onSelect: () => void;
 }) {
   return (
     <TableRow
       onClick={onSelect}
       data-state={selected ? "selected" : undefined}
+      tabIndex={isParent ? undefined : 0}
+      role={isParent ? undefined : "button"}
+      onKeyDown={
+        isParent
+          ? undefined
+          : (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onSelect();
+              }
+            }
+      }
+      style={
+        isParent ? undefined : { animationDelay: `${Math.min(index ?? 0, 8) * 24}ms` }
+      }
       className={cn(
-        !isParent && "cursor-pointer",
+        !isParent &&
+          "animate-reveal cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40",
         selected && "data-[state=selected]:bg-brand/10 hover:bg-brand/10",
         isParent && "bg-muted/20 hover:bg-muted/20"
       )}
@@ -291,26 +310,27 @@ function PropertyCell({
     <TableCell className="py-2.5 text-right align-top">
       <div className="flex flex-col items-end gap-1">
         <span
-          className="rounded-md px-1.5 py-0.5 font-mono text-xs font-medium tabular-nums text-foreground"
+          className="rounded-md px-1.5 py-0.5 font-mono text-xs font-medium tabular-nums text-foreground transition-colors"
           style={{ backgroundColor: goodnessColor(g) }}
         >
           {meta.format(val.predicted)}
         </span>
         {/* confidence underbar */}
-        <span className="flex items-center gap-1" title={`${(val.confidence * 100).toFixed(0)}% confidence`}>
-          <span className="h-[3px] w-8 overflow-hidden rounded-full bg-muted">
-            <span
-              className={cn(
-                "block h-full rounded-full",
-                val.confidence >= 0.8
-                  ? "bg-emerald-400"
-                  : val.confidence >= 0.65
-                    ? "bg-amber-400"
-                    : "bg-rose-400"
-              )}
-              style={{ width: `${val.confidence * 100}%` }}
-            />
-          </span>
+        <span
+          className="block h-[3px] w-8 overflow-hidden rounded-full bg-muted"
+          title={`${(val.confidence * 100).toFixed(0)}% confidence`}
+        >
+          <span
+            className={cn(
+              "block h-full rounded-full",
+              val.confidence >= 0.8
+                ? "bg-emerald-400"
+                : val.confidence >= 0.65
+                  ? "bg-amber-400"
+                  : "bg-rose-400"
+            )}
+            style={{ width: `${val.confidence * 100}%` }}
+          />
         </span>
         {measured != null && err != null && (
           <span

@@ -315,9 +315,9 @@ export async function* runAgent(
   }
 }
 
-export const WELCOME_TEXT = `I'm your **Review copilot** for round 3 of the anti-IL-23 Fab. The parent binds at ${PROPERTIES.binding.format(
+export const WELCOME_TEXT = `I'm your **Review copilot** for round 3 of the anti-IL-23 Fab. The parent binds at **${PROPERTIES.binding.format(
   PARENT.properties.binding.predicted
-)} nM — your job this round is to make it tighter without breaking anything else. Tell me where to point the model.`;
+)} nM** — your job this round is to make it **tighter** without breaking anything else. Tell me where to point the model.`;
 
 export const SUGGESTIONS = [
   "Improve binding without losing stability",

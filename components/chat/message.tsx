@@ -76,9 +76,9 @@ function ToolCall({ part }: { part: ToolPartBase }) {
           {running ? (
             <Loader2 className="size-4 animate-spin text-brand" />
           ) : error ? (
-            <TriangleAlert className="size-4 text-destructive" />
+            <TriangleAlert className="size-4 text-destructive duration-200 animate-in fade-in-0 zoom-in-95" />
           ) : (
-            <Check className="size-4 text-brand" />
+            <Check className="size-4 text-brand duration-200 animate-in fade-in-0 zoom-in-95" />
           )}
         </span>
         {hasDetail && (
@@ -118,8 +118,10 @@ function ToolCall({ part }: { part: ToolPartBase }) {
 function Reasoning({ text }: { text: string }) {
   return (
     <Collapsible className="rounded-xl border border-dashed border-border/60 bg-muted/15">
-      <CollapsibleTrigger className="group/rs flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
-        <Brain className="size-4 text-muted-foreground" strokeWidth={2} />
+      <CollapsibleTrigger className="group/rs flex w-full items-center gap-3 px-3 py-2 text-left text-xs text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
+        <span className="grid size-8 shrink-0 place-items-center text-muted-foreground">
+          <Brain className="size-4" strokeWidth={2} />
+        </span>
         <span className="flex-1 font-medium tracking-tight">Reasoning</span>
         <ChevronRight className="size-3.5 transition-transform group-data-[state=open]/rs:rotate-90" />
       </CollapsibleTrigger>

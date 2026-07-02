@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { Loader2 } from "lucide-react";
 import type { RepresentationTheme } from "@/lib/types";
 
 export interface MolstarHandle {
@@ -244,15 +245,16 @@ export const MolstarViewer = forwardRef<MolstarHandle, Props>(
         <div ref={hostRef} className="absolute inset-0" />
         {status === "idle" && (
           <div className="pointer-events-none absolute inset-0 grid place-items-center">
-            <p className="text-xs text-muted-foreground/70">
-              Structure viewport ready — ask the copilot to load the scaffold.
-            </p>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+              <Loader2 className="size-3.5 animate-spin" />
+              Preparing the parent scaffold…
+            </div>
           </div>
         )}
         {status === "loading" && (
           <div className="pointer-events-none absolute inset-0 grid place-items-center bg-background/60 backdrop-blur-sm">
             <div className="flex items-center gap-2 text-xs text-foreground/80">
-              <span className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              <Loader2 className="size-3.5 animate-spin" />
               Fetching structure from RCSB…
             </div>
           </div>

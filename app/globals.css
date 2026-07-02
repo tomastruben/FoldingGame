@@ -179,6 +179,34 @@
   .animate-reveal {
     animation: reveal-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
+
+  /* Smooth accordion for Radix Collapsible (tool calls, reasoning). */
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
+    }
+  }
+  @keyframes collapsible-up {
+    from {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+  .animate-collapsible-down {
+    animation: collapsible-down 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-collapsible-up {
+    animation: collapsible-up 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
 
 /* Respect the OS "reduce motion" preference — neutralize entrances, transitions,
