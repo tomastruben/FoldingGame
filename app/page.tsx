@@ -1,6 +1,7 @@
 import { Dna, Crosshair } from "lucide-react";
 import { OBJECTIVE } from "@/lib/data";
 import { Workbench } from "@/components/workbench";
+import { HelpOverlay } from "@/components/help-overlay";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -53,13 +54,16 @@ export default function Home() {
           </TooltipContent>
         </Tooltip>
 
-        <div className="ml-auto hidden shrink-0 text-right text-[11px] leading-tight text-muted-foreground lg:block">
-          <div className="font-medium text-foreground/80">
-            Tomas Truben · portfolio demo
+        <div className="ml-auto flex shrink-0 items-center gap-3">
+          <div className="hidden text-right text-[11px] leading-tight text-muted-foreground lg:block">
+            <div className="font-medium text-foreground/80">
+              Tomas Truben · portfolio demo
+            </div>
+            <div className="font-mono text-[10px] tracking-tight text-muted-foreground/70">
+              shadcn/ui · AI SDK pattern · Mol*
+            </div>
           </div>
-          <div className="font-mono text-[10px] tracking-tight text-muted-foreground/70">
-            shadcn/ui · AI SDK pattern · Mol*
-          </div>
+          <HelpOverlay />
         </div>
       </header>
 
