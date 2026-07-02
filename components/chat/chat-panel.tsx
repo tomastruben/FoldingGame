@@ -46,7 +46,9 @@ export function ChatPanel({
     onSend(t);
   };
 
-  const showSuggestions = !streaming && messages.length <= 1;
+  // Keep the example prompts available throughout the demo — they return after
+  // each response instead of vanishing once the first one is used.
+  const showSuggestions = !streaming;
 
   return (
     <div className="flex h-full flex-col bg-card/20">
