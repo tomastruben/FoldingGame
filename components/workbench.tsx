@@ -314,7 +314,12 @@ export function Workbench() {
             onSelect={handleSelectFromTable}
           />
         ) : (
-          <TradeoffPanel variants={tradeoffVariants} heatSet={heatSet} />
+          <TradeoffPanel
+            variants={tradeoffVariants}
+            heatSet={heatSet}
+            busy={streaming}
+            onWalk={() => handleSend("Walk me through the tradeoff")}
+          />
         )}
       </div>
 

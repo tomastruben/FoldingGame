@@ -1,14 +1,28 @@
 "use client";
 
+import { GitCompare } from "lucide-react";
 import { PARENT } from "@/lib/data";
 import { PROPERTIES, PROPERTY_ORDER, goodness } from "@/lib/properties";
 import type { Variant } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 const SERIES = ["#34d399", "#38bdf8", "#f472b6", "#fbbf24"];
 
 interface Props {
   variants: Variant[];
   heatSet: Variant[];
+  /** Trigger the copilot to stage a comparison set (populates this view). */
+  onWalk?: () => void;
+  /** The agent is mid-stream — disable the action so we don't double-fire. */
+  busy?: boolean;
 }
 
 /**
@@ -17,12 +31,39 @@ interface Props {
  * candidate is a labelled dot — so you can read a precise winner per axis
  * (which a radar's area encoding hides).
  */
-export function TradeoffPanel({ variants, heatSet }: Props) {
+export function TradeoffPanel({ variants, heatSet, onWalk, busy }: Props) {
   if (variants.length === 0) {
     return (
-      <div className="grid h-full place-items-center p-6 text-center text-xs text-muted-foreground">
-        Ask the copilot to “walk me through the tradeoff” to compare candidates here.
-      </div>
+      <Empty className="h-full">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <GitCompare className="size-4" strokeWidth={2} />
+          </EmptyMedia>
+          <EmptyTitle>Nothing staged to compare</EmptyTitle>
+          <EmptyDescription>
+            The Selection tab already scores every candidate. The tradeoff is a
+            deliberate head-to-head — the copilot lines up the top finalists on a
+            shared{" "}
+            <span className="text-foreground/80">worst → best</span> scale so you
+            can read a precise per-property winner before committing a plate. Pick
+            a set to populate it.
+          </EmptyDescription>
+        </EmptyHeader>
+        {onWalk && (
+          <EmptyContent>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onWalk}
+              disabled={busy}
+              className="gap-1.5"
+            >
+              <GitCompare className="size-3.5" />
+              {busy ? "Comparing…" : "Walk me through the tradeoff"}
+            </Button>
+          </EmptyContent>
+        )}
+      </Empty>
     );
   }
 
