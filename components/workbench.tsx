@@ -58,6 +58,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /** Tracks the lg breakpoint (1024px). Defaults to desktop so SSR + first client
  *  render agree; corrects on mount. */
@@ -275,14 +280,15 @@ export function Workbench() {
   );
 
   const reviewBottom = (
-    <div className="flex h-full flex-col bg-card/20">
-      {/* Stacks on mobile (funnel row + tabs row) so neither gets cramped;
-          side-by-side on desktop. */}
-      <div className="flex flex-col border-b border-border lg:flex-row lg:items-center lg:justify-between lg:pr-4">
-        <div className="min-w-0 lg:flex-1">
+    <div className="@container/review flex h-full flex-col bg-card/20">
+      {/* Container-query driven: funnel + tabs sit side-by-side when the panel is
+          wide, and stack (funnel row / tabs row) when it's narrowed — whether by
+          the resizable split on desktop or a small screen on mobile. */}
+      <div className="flex flex-col border-b border-border @2xl/review:flex-row @2xl/review:items-center @2xl/review:justify-between @2xl/review:pr-4">
+        <div className="min-w-0 @2xl/review:flex-1">
           <Funnel active={variants.length > 0} />
         </div>
-        <div className="flex shrink-0 justify-end px-3 pb-2 lg:px-0 lg:pb-0">
+        <div className="flex shrink-0 justify-end px-3 pb-2 @2xl/review:px-0 @2xl/review:pb-0">
           <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
             <TabsList>
               <TabsTrigger value="selection" className="gap-1.5 text-xs">
@@ -345,13 +351,17 @@ export function Workbench() {
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize="68%" minSize="40%" className="relative min-w-0">
           {!chatOpen && (
-            <button
-              onClick={() => chatPanelRef.current?.expand()}
-              title="Show copilot"
-              className="absolute left-0 top-1/2 z-30 flex h-16 w-6 -translate-y-1/2 items-center justify-center rounded-r-lg border border-l-0 border-border bg-card text-muted-foreground shadow-sm transition-colors hover:text-foreground"
-            >
-              <PanelLeftOpen className="size-4" />
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => chatPanelRef.current?.expand()}
+                  className="absolute left-0 top-1/2 z-30 flex h-14 w-6 -translate-y-1/2 items-center justify-center rounded-r-lg border border-l-0 border-border bg-card/80 text-muted-foreground opacity-50 shadow-sm backdrop-blur-md transition-all hover:w-7 hover:text-foreground hover:opacity-100"
+                >
+                  <PanelLeftOpen className="size-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Show copilot</TooltipContent>
+            </Tooltip>
           )}
           <ResizablePanelGroup orientation="vertical">
             <ResizablePanel defaultSize="46%" minSize="22%" className="relative">

@@ -181,6 +181,19 @@
   }
 }
 
+/* Respect the OS "reduce motion" preference — neutralize entrances, transitions,
+   and smooth scrolling for anyone who opts out of animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Mol* embed: strip the library's own chrome so our controls own the surface. */
 .msp-plugin .msp-viewport-controls,
 .msp-plugin .msp-viewport-top-left-controls,

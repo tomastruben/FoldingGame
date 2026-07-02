@@ -152,7 +152,7 @@ export const MolstarViewer = forwardRef<MolstarHandle, Props>(
       plugin.canvas3d.setProps({
         trackball: {
           animate: on
-            ? { name: "spin", params: { speed: 0.35, axis: [0, 1, 0] } }
+            ? { name: "spin", params: { speed: 0.18, axis: [0, 1, 0] } }
             : { name: "off", params: {} },
         },
       });
