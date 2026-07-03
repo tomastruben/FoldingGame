@@ -48,7 +48,7 @@ export function ViewerPanel({
 
       {/* top-left: provenance */}
       {structure && ready && (
-        <div className="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-border bg-background/70 px-2.5 py-1 text-[11px] backdrop-blur-md">
+        <div className="pointer-events-none absolute left-3 top-3 z-10 hidden items-center gap-2 rounded-full border border-border bg-background/70 px-2.5 py-1 text-[11px] backdrop-blur-md sm:flex">
           <span className="size-1.5 rounded-full bg-brand" />
           <span className="font-mono font-medium text-foreground">
             {structure.pdbId}
@@ -59,7 +59,7 @@ export function ViewerPanel({
 
       {/* top-right: controls */}
       {ready && (
-        <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5">
+        <div className="absolute right-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap items-center justify-end gap-1.5">
           <Tabs
             value={rep}
             onValueChange={(v) => {

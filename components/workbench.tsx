@@ -441,7 +441,10 @@ export function Workbench() {
             Copilot
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-[85vh] p-0">
+        <SheetContent
+          side="bottom"
+          className="h-[85dvh] max-h-[85dvh] gap-0 overflow-hidden p-0 data-[side=bottom]:h-[85dvh]"
+        >
           <SheetTitle className="sr-only">Review copilot</SheetTitle>
           <SheetDescription className="sr-only">
             Chat with the AI review copilot to design, rank, and explain protein
