@@ -326,9 +326,13 @@ export function Workbench() {
         <div className="min-w-0 @2xl/review:flex-1">
           <Funnel active={variants.length > 0} />
         </div>
-        <div className="flex shrink-0 justify-end px-3 pb-2 @2xl/review:px-0 @2xl/review:pb-0">
-          <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
-            <TabsList>
+        <div className="px-3 pb-2.5 @2xl/review:flex @2xl/review:shrink-0 @2xl/review:justify-end @2xl/review:px-0 @2xl/review:pb-0">
+          <Tabs
+            value={tab}
+            onValueChange={(v) => setTab(v as Tab)}
+            className="w-full @2xl/review:w-auto"
+          >
+            <TabsList className="w-full @2xl/review:w-fit">
               <TabsTrigger value="selection" className="gap-1.5 text-xs">
                 <Table2 className="size-4" />
                 Selection
