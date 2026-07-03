@@ -117,6 +117,7 @@ function reduceParts(parts: MessagePart[], chunk: Exclude<AgentChunk, { type: "e
 
 export function Workbench() {
   const viewerRef = useRef<MolstarHandle>(null);
+  const structureRef = useRef<StructurePreset | null>(null);
   const ctxRef = useRef<AgentContext>({
     hasStructure: false,
     hasVariants: false,
@@ -152,9 +153,16 @@ export function Workbench() {
   );
   const heatSet = useMemo(() => [PARENT, ...(variants.length ? variants : CANDIDATES)], [variants]);
 
+  // Mirror the desired structure into a ref so the viewer's "plugin ready"
+  // callback can (re)load it even from a closure captured before it was set.
+  useEffect(() => {
+    structureRef.current = structure;
+  }, [structure]);
+
   // Auto-load the hero scaffold for an immediate 3D first impression.
   useEffect(() => {
     const t = setTimeout(() => {
+      structureRef.current = HERO_STRUCTURE;
       setStructure(HERO_STRUCTURE);
       viewerRef.current?.load(HERO_STRUCTURE.pdbId, HERO_STRUCTURE.chain);
       ctxRef.current.hasStructure = true;
@@ -295,10 +303,15 @@ export function Workbench() {
       onDeselect={handleDeselect}
       onStatus={(s) => {
         setStatus(s);
-        // On (re)mount — e.g. crossing the breakpoint — re-load the current
-        // structure once the fresh plugin is ready.
-        if (s === "idle" && structure) {
-          viewerRef.current?.load(structure.pdbId, structure.chain);
+        // Load the desired structure the moment the plugin is ready — covers a
+        // fresh mount, a breakpoint remount, and (crucially) a cold init that
+        // finished after the 350ms initial load fired and was dropped. Reading
+        // a ref avoids a stale closure that left it stuck on "Preparing…".
+        if (s === "idle" && structureRef.current) {
+          viewerRef.current?.load(
+            structureRef.current.pdbId,
+            structureRef.current.chain
+          );
         }
       }}
     />

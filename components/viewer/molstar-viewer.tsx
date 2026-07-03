@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, RotateCw } from "lucide-react";
 import type { RepresentationTheme } from "@/lib/types";
 
 export interface MolstarHandle {
@@ -29,6 +29,17 @@ const THEME_MAP: Record<RepresentationTheme, string> = {
   bfactor: "uncertainty",
 };
 
+/** Reject if a promise hasn't settled in `ms` — turns a stalled RCSB request
+ *  into a retryable error instead of an endless "Fetching…" spinner. */
+function withTimeout<T>(p: Promise<T>, ms = 15000): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("RCSB request timed out")), ms)
+    ),
+  ]);
+}
+
 interface Props {
   onStatus?: (s: Status, pdbId?: string) => void;
 }
@@ -44,6 +55,8 @@ export const MolstarViewer = forwardRef<MolstarHandle, Props>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pluginRef = useRef<any>(null);
     const initedRef = useRef(false);
+    const lastLoadRef = useRef<string | null>(null);
+    const loadingRef = useRef<string | null>(null);
     const [status, setStatus] = useState<Status>("idle");
     const [errMsg, setErrMsg] = useState<string>("");
 
@@ -117,23 +130,32 @@ export const MolstarViewer = forwardRef<MolstarHandle, Props>(
     async function loadStructure(pdbId: string) {
       const plugin = pluginRef.current;
       if (!plugin) return;
+      // Ignore a duplicate request for a load already in flight — the initial
+      // timer and the plugin-ready callback can both aim for the same id.
+      if (loadingRef.current === pdbId) return;
+      loadingRef.current = pdbId;
+      lastLoadRef.current = pdbId;
       setStat("loading", pdbId);
       try {
         await plugin.clear();
         const lower = pdbId.toLowerCase();
         let data;
         try {
-          data = await plugin.builders.data.download(
-            { url: `https://models.rcsb.org/${lower}.bcif`, isBinary: true },
-            { state: { isGhost: true } }
+          data = await withTimeout(
+            plugin.builders.data.download(
+              { url: `https://models.rcsb.org/${lower}.bcif`, isBinary: true },
+              { state: { isGhost: true } }
+            )
           );
           const traj = await plugin.builders.structure.parseTrajectory(data, "mmcif");
           await plugin.builders.structure.hierarchy.applyPreset(traj, "default");
         } catch {
           // Fallback to plain-text CIF from the main RCSB mirror.
-          data = await plugin.builders.data.download(
-            { url: `https://files.rcsb.org/download/${pdbId}.cif`, isBinary: false },
-            { state: { isGhost: true } }
+          data = await withTimeout(
+            plugin.builders.data.download(
+              { url: `https://files.rcsb.org/download/${pdbId}.cif`, isBinary: false },
+              { state: { isGhost: true } }
+            )
           );
           const traj = await plugin.builders.structure.parseTrajectory(data, "mmcif");
           await plugin.builders.structure.hierarchy.applyPreset(traj, "default");
@@ -144,6 +166,18 @@ export const MolstarViewer = forwardRef<MolstarHandle, Props>(
         console.error("load failed", e);
         setErrMsg(e instanceof Error ? e.message : String(e));
         setStat("error", pdbId);
+      } finally {
+        loadingRef.current = null;
+      }
+    }
+
+    // Re-run the last load, or fall back to a fresh mount if the plugin itself
+    // never came up — so a stall is always recoverable without a manual refresh.
+    function retryLoad() {
+      if (pluginRef.current && lastLoadRef.current) {
+        loadStructure(lastLoadRef.current);
+      } else {
+        window.location.reload();
       }
     }
 
@@ -261,12 +295,20 @@ export const MolstarViewer = forwardRef<MolstarHandle, Props>(
         )}
         {status === "error" && (
           <div className="absolute inset-0 grid place-items-center p-6 text-center">
-            <div className="max-w-xs space-y-1">
+            <div className="max-w-xs space-y-2.5">
               <p className="text-sm font-medium text-destructive">Viewer offline</p>
               <p className="text-xs text-muted-foreground">
                 Mol* could not initialise or reach RCSB. The rest of the review
                 surface still works. {errMsg && <span className="opacity-60">({errMsg})</span>}
               </p>
+              <button
+                type="button"
+                onClick={retryLoad}
+                className="mx-auto inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary/60 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-secondary"
+              >
+                <RotateCw className="size-3.5" />
+                Retry
+              </button>
             </div>
           </div>
         )}
