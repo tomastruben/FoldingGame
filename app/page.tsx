@@ -29,9 +29,6 @@ export default function Home() {
                 demo
               </Badge>
             </div>
-            <span className="mt-1.5 block text-[11px] font-medium tracking-wide text-muted-foreground">
-              AI Review copilot
-            </span>
           </div>
         </div>
 
