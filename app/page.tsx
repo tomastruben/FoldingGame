@@ -2,7 +2,6 @@ import { Dna, Crosshair } from "lucide-react";
 import { OBJECTIVE } from "@/lib/data";
 import { Workbench } from "@/components/workbench";
 import { HelpOverlay } from "@/components/help-overlay";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -18,17 +17,9 @@ export default function Home() {
             <Dna className="size-4" strokeWidth={2.25} />
           </div>
           <div className="leading-none">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold tracking-tight text-foreground">
-                Foldbench
-              </span>
-              <Badge
-                variant="outline"
-                className="h-4 px-1.5 text-[10px] uppercase tracking-wider text-muted-foreground"
-              >
-                demo
-              </Badge>
-            </div>
+            <span className="text-sm font-semibold tracking-tight text-foreground">
+              Foldbench
+            </span>
           </div>
         </div>
 
